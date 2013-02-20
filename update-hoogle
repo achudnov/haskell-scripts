@@ -18,15 +18,14 @@
 #     | local_ && "/home/" `isPrefixOf` path = serveFile False path
 # to hoogle Server.hs, this will get you fewer dead links
 
-CABALDOCDIR="$HOME/.cabal/share/doc"
-GHCINSTALL="$HOME/haskell"
+. settings.inc
 
 WD=$PWD
 
-mkdir "$HOME/.hoogle"
-mkdir "$HOME/.hoogle/pkgs"
-mkdir "$HOME/.hoogle/index"
-mkdir "$HOME/.hoogle/doc"
+mkdir $HOOGLEDIR
+mkdir "$HOOGLEDIR/pkgs"
+mkdir "$HOOGLEDIR/index"
+mkdir "$HOOGLEDIR/doc"
 
 DIRTY=0
 
@@ -59,10 +58,10 @@ do
   fi
 done
 
-pushd "$HOME/.hoogle/pkgs"
+pushd "$HOOGLEDIR/pkgs"
 if [[ $1 ]]
 then
-  rm "$HOME/.hoogle/index/$1.hoo"
+  rm "$HOOGLEDIR/index/$1.hoo"
   PKGS=$1
 else
   PKGS=`ghc-pkg list --simple-output`
@@ -83,7 +82,7 @@ do
     fi
     PKGBASE=${BASH_REMATCH[1]}
     PKGVER=${BASH_REMATCH[2]}
-    HOOFILE="$HOME/.hoogle/index/$PKG.hoo"
+    HOOFILE="$HOOGLEDIR/index/$PKG.hoo"
     DOCFILE="dist/doc/html/$PKGBASE/$PKGBASE.txt"
     if [ ! -e $HOOFILE ]
     then
@@ -113,8 +112,8 @@ popd
 
 if [[ $DIRTY == 1 ]]
 then
-  pushd "$HOME/.hoogle/"
-  LATEST=`latest-hoo-versions.hs "$HOME/.hoogle/index"`
+  pushd "$HOOGLEDIR"
+  LATEST=`latest-hoo-versions.hs "$HOOGLEDIR/index"`
   hoogle combine $LATEST
 #  hoogle combine $HOME/.hoogle/index/*.hoo
 # for INST in $HOME/.cabal/share/hoogle-*
@@ -124,7 +123,8 @@ then
   popd
 fi
 
-pushd "$HOME/.hoogle"
-hoogle-server >/dev/null 2>&1
+pushd "$HOOGLEDIR"
+# hoogle-server >/dev/null 2>&1
 popd
 
+echo "DONE"

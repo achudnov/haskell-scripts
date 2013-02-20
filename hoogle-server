@@ -8,7 +8,9 @@
 #          firewall
 #
 
+. settings.inc
+
 killall -9 hoogle
 sleep 1
-hoogle server -d $HOME/.hoogle -p 16004 -l & >/dev/null 2>&1
+hoogle server -d $HOOGLEDIR -p 16004 -l & >/dev/null 2>&1
 
